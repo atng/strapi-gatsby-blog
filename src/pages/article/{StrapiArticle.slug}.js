@@ -43,7 +43,7 @@ const Article = ({ data }) => {
     shareImage: article.image,
     article: true,
   };
-
+  console.log(article.content);
   return (
     <Layout seo={seo}>
       <div>
