@@ -1,5 +1,7 @@
 import React from "react";
 import { Link, StaticQuery, graphql } from "gatsby";
+import { Box, DropButton, List } from "grommet";
+import { defaultFormatUtc } from "moment";
 
 const Nav = () => (
   <StaticQuery
@@ -19,38 +21,46 @@ const Nav = () => (
       }
     `}
     render={(data) => (
-      <div>
-        <div>
-          <nav className="uk-navbar-container" data-uk-navbar>
-            <div className="uk-navbar-left">
-              <ul className="uk-navbar-nav">
-                <li>
-                  <Link to="/">{data.strapiGlobal.siteName}</Link>
-                </li>
-              </ul>
-            </div>
-            <div className="uk-navbar-right">
-              <button
-                className="uk-button uk-button-default uk-margin-right"
-                type="button"
-              >
-                Categories
-              </button>
-              <div uk-dropdown="animation: uk-animation-slide-top-small; duration: 1000">
-                <ul className="uk-nav uk-dropdown-nav">
-                  {data.allStrapiCategory.edges.map((category, i) => (
-                    <li key={`category__${category.node.slug}`}>
-                      <Link to={`/category/${category.node.slug}`}>
-                        {category.node.name}
+      <>
+        <Box
+          direction="row"
+          as="nav"
+          pad={{ vertical: "medium", horizontal: "medium" }}
+          align="center"
+        >
+          <Box fill>
+            <Link to="/">{data.strapiGlobal.siteName.toUpperCase()}</Link>
+          </Box>
+          <Box direction="column-reverse">
+            <DropButton
+              border
+              dropContent={
+                <Box width="small" margin="small">
+                  <List
+                    border={null}
+                    data={data.allStrapiCategory.edges}
+                    children={(datum, index) => (
+                      <Link to={`/category/${datum.node.slug}`}>
+                        {datum.node.name}
                       </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </nav>
-        </div>
-      </div>
+                    )}
+                  />
+                </Box>
+              }
+              focusIndicator={false}
+              dropProps={{
+                border: null,
+                elevation: "small",
+              }}
+              dropAlign={{ top: "bottom" }}
+            >
+              <Box border pad={{ horizontal: "large", vertical: "small" }}>
+                CATEGORIES
+              </Box>
+            </DropButton>
+          </Box>
+        </Box>
+      </>
     )}
   />
 );

@@ -2,17 +2,21 @@ import React from "react";
 import { graphql } from "gatsby";
 import ArticlesComponent from "../../components/articles";
 import Layout from "../../components/layout";
+import { Box, Heading } from "grommet";
 
 export const query = graphql`
   query Category($slug: String!) {
     articles: allStrapiArticle(
-      filter: { status: { eq: "published" }, category: { slug: { eq: $slug } } }
+      filter: {
+        status: { eq: "published" }
+        categories: { elemMatch: { slug: { in: [$slug] } } }
+      }
     ) {
       edges {
         node {
           slug
           title
-          category {
+          categories {
             name
           }
           image {
@@ -22,7 +26,7 @@ export const query = graphql`
               }
             }
           }
-          author {
+          authors {
             name
             picture {
               childImageSharp {
@@ -51,12 +55,14 @@ const Category = ({ data }) => {
 
   return (
     <Layout seo={seo}>
-      <div className="uk-section">
-        <div className="uk-container uk-container-large">
-          <h1>{category}</h1>
-          <ArticlesComponent articles={articles} />
-        </div>
-      </div>
+      <Box
+        pad={{ top: "large" }}
+        margin={{ vertical: "xlarge", horizontal: "large" }}
+        gap="xlarge"
+      >
+        <Heading>{category}</Heading>
+        <ArticlesComponent articles={articles} />
+      </Box>
     </Layout>
   );
 };

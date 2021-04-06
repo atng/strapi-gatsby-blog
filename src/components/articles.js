@@ -1,38 +1,55 @@
+import { Box, Grid } from "grommet";
 import React from "react";
 import Card from "./card";
 
 const Articles = ({ articles }) => {
-  const leftArticlesCount = Math.ceil(articles.length / 5);
-  const leftArticles = articles.slice(0, leftArticlesCount);
-  const rightArticles = articles.slice(leftArticlesCount, articles.length);
+  const featuredArticles = articles.slice(0, 2);
+  const remainingArticles = articles.slice(2, articles.length);
 
   return (
-    <div>
-      <div className="uk-child-width-1-2@s" data-uk-grid="true">
-        <div>
-          {leftArticles.map((article, i) => {
-            return (
-              <Card
-                article={article}
-                key={`article__left__${article.node.slug}`}
-              />
-            );
-          })}
-        </div>
-        <div>
-          <div className="uk-child-width-1-2@m uk-grid-match" data-uk-grid>
-            {rightArticles.map((article, i) => {
-              return (
-                <Card
-                  article={article}
-                  key={`article__right__${article.node.slug}`}
-                />
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    </div>
+    <Grid
+      fill
+      rows={["auto", "auto"]}
+      columns={["2/3", "1/3"]}
+      gap="medium"
+      alignContent="stretch"
+      areas={[
+        { name: "featured", start: [0, 0], end: [0, 0] },
+        { name: "articles", start: [0, 1], end: [1, 1] },
+        { name: "articleRemain", start: [1, 0], end: [1, 0] },
+      ]}
+    >
+      <Box gridArea="featured" gap="large">
+        {featuredArticles.map((article, i) => {
+          return (
+            <Card
+              article={article}
+              key={`article__left__${article.node.slug}`}
+            />
+          );
+        })}
+      </Box>
+      <Box gridArea="articleRemain" gap="large" background="light-2">
+        {remainingArticles.map((article, i) => {
+          return (
+            <Card
+              article={article}
+              key={`article__left__${article.node.slug}`}
+            />
+          );
+        })}
+      </Box>
+      <Box gridArea="articles" gap="large" background="dark-5">
+        {featuredArticles.map((article, i) => {
+          return (
+            <Card
+              article={article}
+              key={`article__left__${article.node.slug}`}
+            />
+          );
+        })}
+      </Box>
+    </Grid>
   );
 };
 

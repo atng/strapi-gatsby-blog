@@ -3,7 +3,9 @@ import { graphql } from "gatsby";
 import Img from "gatsby-image";
 import Moment from "react-moment";
 import Layout from "../../components/layout";
-import Markdown from "react-markdown";
+import ReactMarkdown from "react-markdown";
+import { withMetaData } from "../../components/meta/withMetaData";
+import { Box, Heading, Layer, Markdown, Text } from "grommet";
 
 export const query = graphql`
   query ArticleQuery($slug: String!) {
@@ -16,12 +18,12 @@ export const query = graphql`
       image {
         publicURL
         childImageSharp {
-          fixed {
-            src
+          fixed(width: 700, height: 700) {
+            ...GatsbyImageSharpFixed
           }
         }
       }
-      author {
+      authors {
         name
         picture {
           childImageSharp {
@@ -43,49 +45,50 @@ const Article = ({ data }) => {
     shareImage: article.image,
     article: true,
   };
-  console.log(article.content);
+  const pictureRef = React.useRef();
+  console.log(pictureRef);
   return (
     <Layout seo={seo}>
-      <div>
-        <div
-          id="banner"
-          className="uk-height-medium uk-flex uk-flex-center uk-flex-middle uk-background-cover uk-light uk-padding uk-margin"
-          data-src={article.image.publicURL}
-          data-srcset={article.image.publicURL}
-          data-uk-img
+      <Box margin="large">
+        <Box
+          align="center"
+          overflow="hidden"
+          ref={pictureRef}
+          height="large"
+          fill="horizontal"
         >
-          <h1>{article.title}</h1>
-        </div>
-
-        <div className="uk-section">
-          <div className="uk-container uk-container-small">
-            <Markdown source={article.content} escapeHtml={false} />
-
-            <hr className="uk-divider-small" />
-
-            <div className="uk-grid-small uk-flex-left" data-uk-grid="true">
-              <div>
-                {article.author.picture && (
-                  <Img
-                    fixed={article.author.picture.childImageSharp.fixed}
-                    imgStyle={{ position: "static", borderRadius: "50%" }}
-                  />
-                )}
-              </div>
-              <div className="uk-width-expand">
-                <p className="uk-margin-remove-bottom">
-                  By {article.author.name}
-                </p>
-                <p className="uk-text-meta uk-margin-remove-top">
-                  <Moment format="MMM Do YYYY">{article.published_at}</Moment>
-                </p>
-              </div>
+          <Img fixed={article.image.childImageSharp.fixed} />
+          {pictureRef.current && (
+            <Layer plain full responsive={false} target={pictureRef.current}>
+              <Heading level={1} size="xlarge" color={"light-1"}>
+                {article.title.toUpperCase()}
+              </Heading>
+            </Layer>
+          )}
+        </Box>
+        <Markdown>{article.content}</Markdown>
+        <hr style={{ maxWidth: "200px", width: "20%" }} />
+        {article.authors.map((author) => (
+          <Box direction="row">
+            <div>
+              {author.picture && (
+                <Img
+                  fixed={author.picture.childImageSharp.fixed}
+                  imgStyle={{ position: "static", borderRadius: "50%" }}
+                />
+              )}
             </div>
-          </div>
-        </div>
-      </div>
+            <Box direction="column" pad={{ horizontal: "medium" }}>
+              <Text size="small">By {author.name}</Text>
+              <Text size="xsmall">
+                <Moment format="MMM Do YYYY">{article.published_at}</Moment>
+              </Text>
+            </Box>
+          </Box>
+        ))}
+      </Box>
     </Layout>
   );
 };
 
-export default Article;
+export default withMetaData(Article);

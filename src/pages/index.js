@@ -2,19 +2,21 @@ import React from "react";
 import { graphql, useStaticQuery } from "gatsby";
 import Layout from "../components/layout";
 import ArticlesComponent from "../components/articles";
-import "../assets/css/main.css";
+import { Box, Heading } from "grommet";
 
 const IndexPage = () => {
   const data = useStaticQuery(query);
 
   return (
     <Layout seo={data.strapiHomepage.seo}>
-      <div className="uk-section">
-        <div className="uk-container uk-container-large">
-          <h1>{data.strapiHomepage.hero.title}</h1>
-          <ArticlesComponent articles={data.allStrapiArticle.edges} />
-        </div>
-      </div>
+      <Box
+        pad={{ top: "large" }}
+        margin={{ vertical: "xlarge", horizontal: "large" }}
+        gap="xlarge"
+      >
+        <Heading>{data.strapiHomepage.hero.title}</Heading>
+        <ArticlesComponent articles={data.allStrapiArticle.edges} />
+      </Box>
     </Layout>
   );
 };
@@ -39,7 +41,7 @@ const query = graphql`
           strapiId
           slug
           title
-          category {
+          categories {
             name
           }
           image {
@@ -49,7 +51,7 @@ const query = graphql`
               }
             }
           }
-          author {
+          authors {
             name
             picture {
               childImageSharp {
